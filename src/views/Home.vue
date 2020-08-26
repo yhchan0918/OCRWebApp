@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <v-form>
+    <v-form ref="form">
       <v-container>
         <v-row justify="space-between">
           <v-col cols="12" class="text-center">
@@ -36,22 +36,23 @@
           {{ message }}
         </v-alert>
       </v-container>
+
+      <v-container>
+        <v-row justify="space-between">
+          <v-col cols="12" class="text-center">
+            <v-textarea
+              auto-grow
+              filled
+              color="deep-purple"
+              label="Text"
+              rows="1"
+              v-model="resultText"
+            >
+            </v-textarea>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-form>
-    <v-container>
-      <v-row justify="space-between">
-        <v-col cols="12" class="text-center">
-          <v-textarea
-            auto-grow
-            filled
-            color="deep-purple"
-            label="Text"
-            rows="1"
-            v-model="resultText"
-          >
-          </v-textarea>
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
 
@@ -73,8 +74,7 @@ export default {
     //Clear Result
     clearResult() {
       if (this.resultText) {
-        this.resultText = "";
-        this.$refs.file.value = null;
+        this.$refs.form.reset();
       }
     },
     //Submits all of the currentFile to the server

@@ -10,7 +10,9 @@
         <v-row justify="space-between">
           <v-col cols="6" class="text-center"> </v-col>
           <v-col cols="6" class="text-right">
-            <v-btn class="mr-4" @click="submitFile()">Start OCR</v-btn>
+            <v-btn class="mr-4" color="success" @click="submitFile"
+              >Start OCR</v-btn
+            >
             <v-btn>Clear</v-btn>
           </v-col>
         </v-row>
@@ -82,8 +84,7 @@ export default {
       })
         .then((res) => {
           this.message = res.data.message;
-          this.responseInfo = res.data;
-          console.log(res.data);
+          this.result = res.data["ParsedResults"][0].ParsedText;
         })
         .catch(() => {
           this.progress = 0;
@@ -98,6 +99,7 @@ export default {
       console.log(this.currentFile);
     },
   },
+  mounted() {},
   components: {},
 };
 </script>

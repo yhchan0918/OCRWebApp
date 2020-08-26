@@ -4,7 +4,7 @@
       <v-container>
         <v-row justify="space-between">
           <v-col cols="12" class="text-center">
-            <v-file-input v-on:change="selectFile"> </v-file-input>
+            <v-file-input ref="file" v-on:change="selectFile"> </v-file-input>
           </v-col>
         </v-row>
         <v-row justify="space-between">
@@ -13,7 +13,7 @@
             <v-btn class="mr-4" color="success" @click="submitFile"
               >Start OCR</v-btn
             >
-            <v-btn>Clear</v-btn>
+            <v-btn @click="clearResult">Clear</v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -46,7 +46,7 @@
             color="deep-purple"
             label="Text"
             rows="1"
-            v-model="result"
+            v-model="resultText"
           >
           </v-textarea>
         </v-col>
@@ -62,14 +62,21 @@ export default {
   name: "Home",
   data() {
     return {
-      currentFile: null,
+      currentFile: undefined,
       progress: 0,
       message: "",
       responseInfo: null,
-      result: "",
+      resultText: "",
     };
   },
   methods: {
+    //Clear Result
+    clearResult() {
+      if (this.resultText) {
+        this.resultText = "";
+        this.$refs.file.value = null;
+      }
+    },
     //Submits all of the currentFile to the server
     submitFile() {
       if (!this.currentFile) {
@@ -84,7 +91,7 @@ export default {
       })
         .then((res) => {
           this.message = res.data.message;
-          this.result = res.data["ParsedResults"][0].ParsedText;
+          this.resultText = res.data["ParsedResults"][0].ParsedText;
         })
         .catch(() => {
           this.progress = 0;

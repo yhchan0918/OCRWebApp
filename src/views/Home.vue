@@ -23,8 +23,7 @@
           </v-col>
         </v-row>
         <v-row justify="space-between">
-          <v-col cols="6" class="text-center"> </v-col>
-          <v-col cols="6" class="text-right">
+          <v-col cols="12" class="text-center">
             <v-btn class="mr-4" color="success" @click="submitFile"
               >Start OCR
             </v-btn>
@@ -54,7 +53,7 @@
         <v-container>
           <v-row justify="space-between">
             <v-col cols="6">
-              <v-card min-height="450px">
+              <v-card height="425px">
                 <v-card-title>
                   Image Preview
                 </v-card-title>
@@ -64,7 +63,7 @@
                       <v-img
                         :src="imagePreview"
                         v-show="showPreview"
-                        max-height="400px"
+                        height="300px"
                         contain
                       ></v-img>
                     </v-col>
@@ -73,7 +72,7 @@
               </v-card>
             </v-col>
             <v-col cols="6" class="text-center">
-              <v-card min-height="450px">
+              <v-card height="425px">
                 <v-card-title>
                   OCR'ed Result
                 </v-card-title>
@@ -81,12 +80,10 @@
                   <v-row>
                     <v-col cols="12">
                       <v-textarea
-                        clearable
-                        success
+                        outlined
                         color="primary"
+                        rows="11"
                         label="Text"
-                        row-height="50"
-                        rows="10"
                         v-model="resultText"
                       >
                       </v-textarea>
@@ -128,6 +125,7 @@ export default {
     clearResult() {
       this.$refs.form.reset();
       this.message = "";
+      this.showPreview = false;
     },
     //Submits all of the currentFile to the server
     submitFile() {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-alert :type="type" border="left" dark>
+    <v-alert :type="type" dark>
       {{ msg }}
     </v-alert>
   </div>

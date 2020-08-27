@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-form ref="form">
-      <v-container class="overline">
+      <v-container>
         <v-row align-content="center" justify="space-between">
           <v-col cols="4"
             ><span>Upload image or PDF file (.png,.jpg, or .PDF)</span>
@@ -51,41 +51,52 @@
           </v-col>
         </v-row>
         <TheAlert v-show="message" :type="AlertTypes" :msg="message" />
-      </v-container>
-
-      <v-container>
-        <v-row justify="space-between">
-          <v-col cols="6">
-            <v-card hover class="mx-auto">
-              <v-card-title>
-                Image Preview
-              </v-card-title>
-              <v-img
-                :src="imagePreview"
-                v-show="showPreview"
-                max-height="500px"
-                contain
-              ></v-img>
-            </v-card>
-          </v-col>
-          <v-col cols="6" class="text-center">
-            <v-card class="mx-auto">
-              <v-card-title>
-                Parsed Result
-              </v-card-title>
-              <v-textarea
-                clearable
-                success
-                auto-grow
-                color="primary"
-                label="Text"
-                rows="1"
-                v-model="resultText"
-              >
-              </v-textarea>
-            </v-card>
-          </v-col>
-        </v-row>
+        <v-container>
+          <v-row justify="space-between">
+            <v-col cols="6">
+              <v-card min-height="450px">
+                <v-card-title>
+                  Image Preview
+                </v-card-title>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-img
+                        :src="imagePreview"
+                        v-show="showPreview"
+                        max-height="400px"
+                        contain
+                      ></v-img>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
+            </v-col>
+            <v-col cols="6" class="text-center">
+              <v-card min-height="450px">
+                <v-card-title>
+                  OCR'ed Result
+                </v-card-title>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-textarea
+                        clearable
+                        success
+                        color="primary"
+                        label="Text"
+                        row-height="50"
+                        rows="10"
+                        v-model="resultText"
+                      >
+                      </v-textarea>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-container>
     </v-form>
   </div>
@@ -95,6 +106,7 @@
 // @ is an alias to /src
 import OCRService from "@/services/OCRService.js";
 import TheAlert from "@/components/TheAlert.vue";
+
 export default {
   name: "Home",
   data() {
@@ -103,7 +115,7 @@ export default {
       showPreview: false,
       imagePreview: "",
       progress: 0,
-      AlertTypes: "info",
+      AlertTypes: "warning",
       message: "",
       acceptedFormat: [],
       isUploaded: false,
@@ -184,16 +196,11 @@ export default {
     */
       if (this.currentFile) {
         /*
-        Ensure the file is an image file.
-      */
-        if (/\.(jpe?g|png|gif)$/i.test(this.currentFile.name)) {
-          /*
           Fire the readAsDataURL method which will read the file in and
           upon completion fire a 'load' event which we will listen to and
           display the image in the preview.
         */
-          reader.readAsDataURL(this.currentFile);
-        }
+        reader.readAsDataURL(this.currentFile);
       }
     },
   },

@@ -74,7 +74,7 @@
             <v-col cols="6" class="text-center">
               <v-card height="425px">
                 <v-card-title>
-                  OCR'ed Result
+                  OCR'ed Result testing
                 </v-card-title>
                 <v-container>
                   <v-row>

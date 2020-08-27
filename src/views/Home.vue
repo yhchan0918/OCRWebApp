@@ -40,7 +40,8 @@
                 <v-progress-linear
                   v-model="progress"
                   color="primary"
-                  height="25"
+                  height="30"
+                  rounded
                   reactive
                 >
                   <strong>{{ progress }} %</strong>
@@ -49,21 +50,40 @@
             </div>
           </v-col>
         </v-row>
-        <TheAlert v-if="message" :type="AlertTypes[0]" :msg="message" />
+        <TheAlert v-show="message" :type="AlertTypes" :msg="message" />
       </v-container>
 
       <v-container>
         <v-row justify="space-between">
-          <v-col cols="12" class="text-center">
-            <v-textarea
-              auto-grow
-              filled
-              color="primary"
-              label="Text"
-              rows="1"
-              v-model="resultText"
-            >
-            </v-textarea>
+          <v-col cols="6">
+            <v-card hover class="mx-auto">
+              <v-card-title>
+                Image Preview
+              </v-card-title>
+              <v-img
+                :src="imagePreview"
+                v-show="showPreview"
+                max-height="500px"
+                contain
+              ></v-img>
+            </v-card>
+          </v-col>
+          <v-col cols="6" class="text-center">
+            <v-card class="mx-auto">
+              <v-card-title>
+                Parsed Result
+              </v-card-title>
+              <v-textarea
+                clearable
+                success
+                auto-grow
+                color="primary"
+                label="Text"
+                rows="1"
+                v-model="resultText"
+              >
+              </v-textarea>
+            </v-card>
           </v-col>
         </v-row>
       </v-container>
@@ -80,8 +100,10 @@ export default {
   data() {
     return {
       currentFile: undefined,
+      showPreview: false,
+      imagePreview: "",
       progress: 0,
-      AlertTypes: ["success"],
+      AlertTypes: "info",
       message: "",
       acceptedFormat: [],
       isUploaded: false,
@@ -110,6 +132,7 @@ export default {
       })
         .then((res) => {
           if (!res.data["IsErroredOnProcessing"]) {
+            this.AlertTypes = "success";
             switch (res.data["OCRExitCode"]) {
               case 1:
                 this.message =
@@ -119,16 +142,9 @@ export default {
                 this.message =
                   "Parsed Partially (Only few pages out of all the pages parsed successfully)";
                 break;
-              case 3:
-                this.message =
-                  "Image / All the PDF pages failed parsing (This happens mainly because the OCR engine fails to parse an image)";
-                break;
-              case 4:
-                this.message =
-                  "Error occurred when attempting to parse (This happens when a fatal error occurs during parsing )";
-                break;
             }
           } else {
+            this.AlertTypes = "error";
             this.message = res.data["ErrorMessage"];
           }
 
@@ -144,6 +160,41 @@ export default {
     handleFileChange(file) {
       this.progress = 0;
       this.currentFile = file;
+      /*
+      Initialize a File Reader object
+    */
+      let reader = new FileReader();
+
+      /*
+      Add an event listener to the reader that when the file
+      has been loaded, we flag the show preview as true and set the
+      image to be what was read from the reader.
+    */
+      reader.addEventListener(
+        "load",
+        function() {
+          this.showPreview = true;
+          this.imagePreview = reader.result;
+        }.bind(this),
+        false
+      );
+
+      /*
+      Check to see if the file is not empty.
+    */
+      if (this.currentFile) {
+        /*
+        Ensure the file is an image file.
+      */
+        if (/\.(jpe?g|png|gif)$/i.test(this.currentFile.name)) {
+          /*
+          Fire the readAsDataURL method which will read the file in and
+          upon completion fire a 'load' event which we will listen to and
+          display the image in the preview.
+        */
+          reader.readAsDataURL(this.currentFile);
+        }
+      }
     },
   },
   mounted() {},

@@ -1,28 +1,45 @@
 <template>
   <div class="home">
     <v-form ref="form">
-      <v-container>
-        <v-row justify="space-between">
-          <v-col cols="12" class="text-center">
-            <v-file-input ref="file" v-on:change="selectFile"> </v-file-input>
+      <v-container class="overline">
+        <v-row align-content="center" justify="space-between">
+          <v-col cols="4"
+            ><span>Upload image or PDF file (.png,.jpg, or .PDF)</span>
+            <p>file size limit: 1MB</p></v-col
+          >
+          <v-col cols="8" class="">
+            <v-file-input
+              label="File Input"
+              color="primary"
+              :clearable="false"
+              outlined
+              ref="file"
+              :accept="acceptedFormat"
+              @change="handleFileChange"
+              rounded
+              show-size
+            >
+            </v-file-input>
           </v-col>
         </v-row>
         <v-row justify="space-between">
           <v-col cols="6" class="text-center"> </v-col>
           <v-col cols="6" class="text-right">
             <v-btn class="mr-4" color="success" @click="submitFile"
-              >Start OCR</v-btn
+              >Start OCR
+            </v-btn>
+            <v-btn @click="clearResult" color=""
+              >Clear <v-icon>mdi-autorenew</v-icon></v-btn
             >
-            <v-btn @click="clearResult">Clear</v-btn>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
-            <div v-if="currentFile">
+            <div v-if="isUploaded">
               <div>
                 <v-progress-linear
                   v-model="progress"
-                  color="light-blue"
+                  color="primary"
                   height="25"
                   reactive
                 >
@@ -32,9 +49,7 @@
             </div>
           </v-col>
         </v-row>
-        <v-alert v-if="message" border="left" color="blue-grey" dark>
-          {{ message }}
-        </v-alert>
+        <TheAlert v-if="message" :type="AlertTypes[0]" :msg="message" />
       </v-container>
 
       <v-container>
@@ -43,7 +58,7 @@
             <v-textarea
               auto-grow
               filled
-              color="deep-purple"
+              color="primary"
               label="Text"
               rows="1"
               v-model="resultText"
@@ -59,23 +74,26 @@
 <script>
 // @ is an alias to /src
 import OCRService from "@/services/OCRService.js";
+import TheAlert from "@/components/TheAlert.vue";
 export default {
   name: "Home",
   data() {
     return {
       currentFile: undefined,
       progress: 0,
+      AlertTypes: ["success"],
       message: "",
-      responseInfo: null,
+      acceptedFormat: [],
+      isUploaded: false,
+      IsParsed: false,
       resultText: "",
     };
   },
   methods: {
     //Clear Result
     clearResult() {
-      if (this.resultText) {
-        this.$refs.form.reset();
-      }
+      this.$refs.form.reset();
+      this.message = "";
     },
     //Submits all of the currentFile to the server
     submitFile() {
@@ -87,10 +105,33 @@ export default {
       this.message = "";
 
       OCRService.submitFile(this.currentFile, (event) => {
+        this.isUploaded = true;
         this.progress = Math.round((100 * event.loaded) / event.total);
       })
         .then((res) => {
-          this.message = res.data.message;
+          if (!res.data["IsErroredOnProcessing"]) {
+            switch (res.data["OCRExitCode"]) {
+              case 1:
+                this.message =
+                  "Parsed Successfully (Image / All pages parsed successfully)";
+                break;
+              case 2:
+                this.message =
+                  "Parsed Partially (Only few pages out of all the pages parsed successfully)";
+                break;
+              case 3:
+                this.message =
+                  "Image / All the PDF pages failed parsing (This happens mainly because the OCR engine fails to parse an image)";
+                break;
+              case 4:
+                this.message =
+                  "Error occurred when attempting to parse (This happens when a fatal error occurs during parsing )";
+                break;
+            }
+          } else {
+            this.message = res.data["ErrorMessage"];
+          }
+
           this.resultText = res.data["ParsedResults"][0].ParsedText;
         })
         .catch(() => {
@@ -100,13 +141,14 @@ export default {
         });
     },
     //Handles a change on the file upload
-    selectFile(file) {
+    handleFileChange(file) {
       this.progress = 0;
       this.currentFile = file;
-      console.log(this.currentFile);
     },
   },
   mounted() {},
-  components: {},
+  components: {
+    TheAlert,
+  },
 };
 </script>

@@ -1,14 +1,14 @@
 <template>
   <div class="home">
     <v-container>
-      <v-card class="elevation-4">
+      <v-card class="elevation-4" id="card">
         <v-form class="mx-10" ref="form">
           <v-container>
             <v-row align-content="center" justify="space-between" class="mt-2">
               <v-col cols="4" class="pa-0 ma-0"
-                ><span>Upload image or PDF file (.png, .jpg, or .pdf) :</span>
-                <p>File size limit: 1MB</p>
-              </v-col>
+                ><span>Upload image or PDF file (.png,.jpg, or .pdf) :</span>
+                <p>File size limit: 1MB</p></v-col
+              >
               <v-col cols="8" class="pa-0 ma-0">
                 <v-file-input
                   height="40px"
@@ -37,22 +37,31 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" v-if="isUploaded">
-                <div>
-                  <div>
-                    <v-progress-linear
-                      v-model="progress"
-                      color="primary"
-                      height="30"
-                      rounded
-                      class="mb-2"
-                      reactive
-                    >
-                      <strong>{{ progress }} %</strong>
-                    </v-progress-linear>
-                  </div>
-                </div>
-                <TheAlert v-show="message" :type="AlertTypes" :msg="message" />
+              <v-col cols="12" class="ma-0 pa-0">
+                <transition @enter="progressEnter">
+                  <v-progress-linear
+                    key="progress"
+                    v-if="isUploaded"
+                    id="progress"
+                    v-model="progress"
+                    color="primary"
+                    height="30"
+                    rounded
+                    class="mb-2"
+                    reactive
+                  >
+                    <strong>{{ progress }} %</strong>
+                  </v-progress-linear>
+                </transition>
+                <transition @enter="enter">
+                  <TheAlert
+                    key="alert"
+                    v-if="message"
+                    id="alert"
+                    :type="AlertTypes"
+                    :msg="message"
+                  />
+                </transition>
               </v-col>
             </v-row>
 
@@ -109,6 +118,7 @@
 // @ is an alias to /src
 import OCRService from "@/services/OCRService.js";
 import TheAlert from "@/components/TheAlert.vue";
+import gsap from "gsap";
 
 export default {
   name: "Home",
@@ -207,8 +217,30 @@ export default {
         reader.readAsDataURL(this.currentFile);
       }
     },
+    startAnimation() {
+      gsap.from("#card", { x: -1000, duration: 1 });
+    },
+    alertAnimation() {
+      gsap.fromTo("#alert", 1, { opacity: 0, y: 30 }, { opacity: 1, y: 0 });
+    },
+    enter() {
+      return this.alertAnimation();
+    },
+    progressAnimation() {
+      gsap.fromTo(
+        "#progress",
+        1.6,
+        { opacity: 0, scale: 0.1 },
+        { opacity: 1, scale: 1 }
+      );
+    },
+    progressEnter() {
+      return this.progressAnimation();
+    },
   },
-  mounted() {},
+  mounted() {
+    this.startAnimation();
+  },
   components: {
     TheAlert,
   },

@@ -53,7 +53,7 @@
                     <strong>{{ progress }} %</strong>
                   </v-progress-linear>
                 </transition>
-                <transition @enter="enter">
+                <transition @enter="alertEnter">
                   <TheAlert
                     key="alert"
                     v-if="message"
@@ -157,6 +157,7 @@ export default {
         this.progress = Math.round((100 * event.loaded) / event.total);
       })
         .then((res) => {
+          this.isUploaded = false;
           if (!res.data["IsErroredOnProcessing"]) {
             this.AlertTypes = "success";
             switch (res.data["OCRExitCode"]) {
@@ -218,20 +219,20 @@ export default {
       }
     },
     startAnimation() {
-      gsap.from("#card", { x: -1000, duration: 1 });
+      gsap.from("#card", { x: -1000, duration: 1.2 });
     },
     alertAnimation() {
-      gsap.fromTo("#alert", 1, { opacity: 0, y: 30 }, { opacity: 1, y: 0 });
+      gsap.fromTo("#alert", 1.5, { opacity: 0, y: 30 }, { opacity: 1, y: 0 });
     },
-    enter() {
+    alertEnter() {
       return this.alertAnimation();
     },
     progressAnimation() {
       gsap.fromTo(
         "#progress",
-        1.6,
-        { opacity: 0, scale: 0.1 },
-        { opacity: 1, scale: 1 }
+        1.5,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0 }
       );
     },
     progressEnter() {

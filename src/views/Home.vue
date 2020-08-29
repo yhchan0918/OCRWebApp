@@ -1,101 +1,107 @@
 <template>
   <div class="home">
-    <v-form ref="form">
-      <v-container>
-        <v-row align-content="center" justify="space-between">
-          <v-col cols="4"
-            ><span>Upload image or PDF file (.png,.jpg, or .PDF)</span>
-            <p>file size limit: 1MB</p></v-col
-          >
-          <v-col cols="8" class="">
-            <v-file-input
-              label="File Input"
-              color="primary"
-              :clearable="false"
-              outlined
-              ref="file"
-              :accept="acceptedFormat"
-              @change="handleFileChange"
-              rounded
-              show-size
-            >
-            </v-file-input>
-          </v-col>
-        </v-row>
-        <v-row justify="space-between">
-          <v-col cols="12" class="text-center">
-            <v-btn class="mr-4" color="success" @click="submitFile"
-              >Start OCR
-            </v-btn>
-            <v-btn @click="clearResult" color=""
-              >Clear <v-icon>mdi-autorenew</v-icon></v-btn
-            >
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <div v-if="isUploaded">
-              <div>
-                <v-progress-linear
-                  v-model="progress"
+    <v-container>
+      <v-card class="elevation-4">
+        <v-form class="mx-10" ref="form">
+          <v-container>
+            <v-row align-content="center" justify="space-between" class="mt-2">
+              <v-col cols="4" class="pa-0 ma-0"
+                ><span>Upload image or PDF file (.png,.jpg, or .pdf) :</span>
+                <p>File size limit: 1MB</p>
+              </v-col>
+              <v-col cols="8" class="pa-0 ma-0">
+                <v-file-input
+                  height="40px"
+                  label="File input"
+                  dense
+                  placeholder="Select a file"
                   color="primary"
-                  height="30"
+                  :clearable="false"
+                  hide-details
+                  ref="file"
+                  :accept="acceptedFormat"
+                  @change="handleFileChange"
+                  outlined
                   rounded
-                  reactive
+                  show-size
                 >
-                  <strong>{{ progress }} %</strong>
-                </v-progress-linear>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-        <TheAlert v-show="message" :type="AlertTypes" :msg="message" />
-        <v-container>
-          <v-row justify="space-between">
-            <v-col cols="6">
-              <v-card height="425px">
-                <v-card-title>
-                  Image Preview
-                </v-card-title>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-img
-                        :src="imagePreview"
-                        v-show="showPreview"
-                        height="300px"
-                        contain
-                      ></v-img>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card>
-            </v-col>
-            <v-col cols="6" class="text-center">
-              <v-card height="425px">
-                <v-card-title>
-                  OCR'ed Result testing
-                </v-card-title>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-textarea
-                        outlined
-                        color="primary"
-                        rows="11"
-                        label="Text"
-                        v-model="resultText"
-                      >
-                      </v-textarea>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-container>
-    </v-form>
+                </v-file-input>
+              </v-col>
+              <v-col cols="12" class="text-center">
+                <v-btn class="mr-4" color="success" @click="submitFile"
+                  >Start OCR
+                </v-btn>
+                <v-btn @click="clearResult" color=""
+                  >Clear <v-icon>mdi-autorenew</v-icon></v-btn
+                >
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" v-if="isUploaded">
+                <div>
+                  <div>
+                    <v-progress-linear
+                      v-model="progress"
+                      color="primary"
+                      height="30"
+                      rounded
+                      class="mb-2"
+                      reactive
+                    >
+                      <strong>{{ progress }} %</strong>
+                    </v-progress-linear>
+                  </div>
+                </div>
+                <TheAlert v-show="message" :type="AlertTypes" :msg="message" />
+              </v-col>
+            </v-row>
+
+            <v-row justify="space-between">
+              <v-col cols="6">
+                <v-card height="350px">
+                  <v-card-title>
+                    Image Preview
+                  </v-card-title>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-img
+                          :src="imagePreview"
+                          v-show="showPreview"
+                          height="230px"
+                          contain
+                        ></v-img>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-col>
+              <v-col cols="6" class="text-center">
+                <v-card height="350px">
+                  <v-card-title>
+                    OCR'ed Result
+                  </v-card-title>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-textarea
+                          outlined
+                          color="primary"
+                          rows="8"
+                          label="Text"
+                          v-model="resultText"
+                        >
+                        </v-textarea>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card>
+    </v-container>
   </div>
 </template>
 

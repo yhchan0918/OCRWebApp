@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-alert :type="type" dark>
+    <v-alert :type="type" dense elevation="4" transition="slide-x-transition">
       {{ msg }}
     </v-alert>
   </div>

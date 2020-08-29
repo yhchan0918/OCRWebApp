@@ -1,22 +1,17 @@
 <template>
-<nav>
-  <v-app-bar app color="primary" dark>
+  <nav>
+    <v-app-bar app dense color="primary" dark>
       <div class="d-flex align-center">
         <h1>CopyCat</h1>
       </div>
 
       <v-spacer></v-spacer>
-
-      
-</v-app-bar>
-</nav>
-
+    </v-app-bar>
+  </nav>
 </template>
 
 <script>
-export default {
-};
+export default {};
 </script>
 
-<style>
-</style>
+<style></style>

@@ -6,7 +6,7 @@
           <v-container>
             <v-row align-content="center" justify="space-between" class="mt-2">
               <v-col cols="4" class="pa-0 ma-0"
-                ><span>Upload image or PDF file (.png,.jpg, or .pdf) :</span>
+                ><span>Upload image or PDF file (.png, .jpg, or .pdf) :</span>
                 <p>File size limit: 1MB</p>
               </v-col>
               <v-col cols="8" class="pa-0 ma-0">
